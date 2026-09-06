@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laboratorio XR Multiplataforma - A-Frame</title>
+  <!-- Librería A-Frame -->
+  <script src="https://cdn.jsdelivr.net/npm/aframe@1.4.1/dist/aframe-master.min.js"></script>
+
+  <!-- Estilos CSS para el panel de opciones centrado -->
+  <style>
+    #ui-container {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(8px);
+      padding: 12px 20px;
+      border-radius: 12px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .ui-btn {
+      background: #2563eb;
+      color: #ffffff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 13px;
+      font-family: Arial, sans-serif;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .ui-btn:hover {
+      background: #1d4ed8;
+      transform: translateY(-1px);
+    }
+
+    .ui-btn:active {
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Panel de Opciones Flotante y Centrado -->
+  <div id="ui-container">
+    <button class="ui-btn" onclick="enfocarAmbos()">Ver Ambos</button>
+    <button class="ui-btn" onclick="enfocarPrimitivas()">Ver Primitivas</button>
+    <button class="ui-btn" onclick="enfocarCAD()">Ver Modelo CAD</button>
+  </div>
+
+  <a-scene embedded vr-mode-ui="enabled: true">
+    
+    <!-- Carga de Recursos (Fase 3: Modelo CAD) -->
+    <a-assets>
+      <a-asset-item id="modeloIndustrial" src="models/modelo.glb"></a-asset-item>
+    </a-assets>
+
+    <!-- Entorno y Piso -->
+    <a-sky color="#ECECEC"></a-sky>
+    <a-plane position="0 0 0" rotation="-90 0 0" width="30" height="30" color="#7BC8A4"></a-plane>
+
+    <!-- ZONA 1 (IZQUIERDA): MODELO CON PRIMITIVAS DE A-FRAME (Fase 2) -->
+    <a-entity id="zona-primitivas" position="-4 0 0">
+      <a-box position="-1 0.5 -5" width="1.5" height="1" depth="4" color="#4CC3D9"></a-box>
+      <a-cylinder position="1.5 1.5 -5" radius="0.8" height="3" color="#FFC65D"></a-cylinder>
+      <a-sphere position="1.5 3.2 -5" radius="0.3" color="#EF2D5E"></a-sphere>
+    </a-entity>
+
+    <!-- ZONA 2 (DERECHA): MODELO CAD IMPORTADO GLB (Fase 3) -->
+    <a-entity 
+      id="zona-cad"
+      gltf-model="#modeloIndustrial" 
+      position="4 0 -5" 
+      scale="1 1 1"
+      rotation="0 0 0">
+    </a-entity>
+
+    <!-- CÁMARA PRINCIPAL -->
+    <a-entity id="rigCamera" position="0 1.6 3">
+      <a-camera look-controls WASD-controls></a-camera>
+    </a-entity>
+
+  </a-scene>
+
+  <!-- Lógica en JavaScript para el cambio de vista -->
+  <script>
+    const rigCamera = document.getElementById('rigCamera');
+
+    function enfocarAmbos() {
+      rigCamera.setAttribute('position', '0 1.6 3');
+    }
+
+    function enfocarPrimitivas() {
+      rigCamera.setAttribute('position', '-4 1.6 -1');
+    }
+
+    function enfocarCAD() {
+      rigCamera.setAttribute('position', '4 1.6 -1');
+    }
+  </script>
+
+</body>
+</html>
