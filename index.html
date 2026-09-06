@@ -4,43 +4,48 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Laboratorio XR Multiplataforma - A-Frame</title>
-  <!-- Librería de A-Frame -->
+  <!-- Librería A-Frame (Versión requerida por la guía) -->
   <script src="https://cdn.jsdelivr.net/npm/aframe@1.4.1/dist/aframe-master.min.js"></script>
 </head>
 <body>
   <a-scene embedded vr-mode-ui="enabled: true">
     
-    <!-- Carga de Recursos (Fase 3: Modelo CAD) -->
+    <!-- CARGA DE RECURSOS (Fase 3: Modelo CAD) -->
     <a-assets>
       <a-asset-item id="modeloIndustrial" src="models/modelo.glb"></a-asset-item>
     </a-assets>
 
-    <!-- Entorno y Iluminación -->
+    <!-- ENTORNO Y PISO -->
     <a-sky color="#ECECEC"></a-sky>
-    <a-plane position="0 0 0" rotation="-90 0 0" width="20" height="20" color="#7BC8A4"></a-plane>
+    <a-plane position="0 0 0" rotation="-90 0 0" width="30" height="30" color="#7BC8A4"></a-plane>
 
-    <!-- FASE 1 & 2: Celda Industrial con Primitivas A-Frame -->
-    
-    <!-- Banda Transportadora / Base (a-box) -->
-    <a-box position="-2 0.5 -4" width="1.5" height="1" depth="4" color="#4CC3D9"></a-box>
-    
-    <!-- Tanque de Almacenamiento (a-cylinder) -->
-    <a-cylinder position="2 1.5 -4" radius="0.8" height="3" color="#FFC65D"></a-cylinder>
-    
-    <!-- Sensor / Indicador de Alarma (a-sphere) -->
-    <a-sphere position="2 3.2 -4" radius="0.3" color="#EF2D5E"></a-sphere>
 
-    <!-- FASE 3: Modelo CAD importado (GLB) -->
-    <!-- Ajusta position, scale y rotation según las dimensiones de tu modelo -->
-    <a-entity 
-      gltf-model="#modeloIndustrial" 
-      position="0 0 -3" 
-      scale="0.5 0.5 0.5"
-      rotation="0 45 0">
+    <!-- ZONA 1 (IZQUIERDA): MODELO CON PRIMITIVAS DE A-FRAME (Fase 2) -->
+    <a-entity id="zona-primitivas" position="-4 0 0">
+      <!-- Banda transportadora / Base azul -->
+      <a-box position="-1 0.5 -5" width="1.5" height="1" depth="4" color="#4CC3D9"></a-box>
+      
+      <!-- Tanque de almacenamiento amarillo -->
+      <a-cylinder position="1.5 1.5 -5" radius="0.8" height="3" color="#FFC65D"></a-cylinder>
+      
+      <!-- Sensor o indicador rosado -->
+      <a-sphere position="1.5 3.2 -5" radius="0.3" color="#EF2D5E"></a-sphere>
     </a-entity>
 
-    <!-- Cámara para movimiento en PC y Móvil -->
-    <a-entity position="0 1.6 2">
+
+    <!-- ZONA 2 (DERECHA): MODELO CAD IMPORTADO GLB (Fase 3) -->
+    <!-- Desplazado a X = 4 para separarlo de las primitivas -->
+    <a-entity 
+      gltf-model="#modeloIndustrial" 
+      position="4 0 -5" 
+      scale="1 1 1"
+      rotation="0 0 0">
+    </a-entity>
+
+
+    <!-- CÁMARA Y CONTROLES -->
+    <!-- Centrada a una distancia Z = 3 para que puedas ver ambos modelos al cargar la página -->
+    <a-entity position="0 1.6 3">
       <a-camera look-controls WASD-controls></a-camera>
     </a-entity>
 
