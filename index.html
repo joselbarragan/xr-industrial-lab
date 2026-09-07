@@ -153,7 +153,7 @@
       const video = document.getElementById('webcam');
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: { exact: "environment" } }
+          video: { facingMode: "environment" }
         });
         video.srcObject = stream;
       } catch (err) {
