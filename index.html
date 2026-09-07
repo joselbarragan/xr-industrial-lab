@@ -76,31 +76,11 @@
       color: #ffffff;
       border-color: #f87171;
     }
-
-    /* Posicionamiento del botón nativo VR */
-    .a-enter-vr {
-      position: fixed !important;
-      bottom: 20px !important;
-      right: 20px !important;
-      z-index: 999999 !important;
-    }
-
-    .a-enter-vr-button {
-      position: fixed !important;
-      bottom: 20px !important;
-      right: 20px !important;
-      width: 55px !important;
-      height: 55px !important;
-      background-color: rgba(15, 23, 42, 0.9) !important;
-      border: 2px solid #ffffff !important;
-      border-radius: 50% !important;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.5) !important;
-    }
   </style>
 </head>
 <body>
 
-  <!-- Alimentación de video directo desde la cámara -->
+  <!-- Video directo desde la cámara -->
   <video id="webcam" autoplay playsinline muted></video>
 
   <!-- PANEL DE OPCIONES -->
@@ -111,15 +91,14 @@
     <button class="ui-btn ui-btn-vr" onclick="forzarIngresoVR()">🥽 Entrar VR</button>
   </div>
 
-  <!-- Escena A-Frame con fondo transparente -->
+  <!-- Escena A-Frame -->
   <a-scene background="transparent: true" vr-mode-ui="enabled: true">
     
-    <!-- Carga del Modelo CAD -->
     <a-assets>
       <a-asset-item id="modeloIndustrial" src="models/modelo.glb"></a-asset-item>
     </a-assets>
 
-    <!-- Piso semitransparente para no tapar la cámara -->
+    <!-- Piso semitransparente -->
     <a-plane position="0 -1 0" rotation="-90 0 0" width="30" height="30" color="#7BC8A4" material="opacity: 0.3; transparent: true"></a-plane>
 
     <!-- ZONA 1: PRIMITIVAS -->
@@ -139,16 +118,15 @@
       visible="true">
     </a-entity>
 
-    <!-- CÁMARA CON GIROSCÓPIO -->
+    <!-- CÁMARA CON VINCULACIÓN AL GIROSCÓPIO -->
     <a-entity id="rigCamera" position="0 1.6 2">
-      <a-camera look-controls="magicWindowTrackingEnabled: true; touchEnabled: true;" WASD-controls></a-camera>
+      <a-camera id="mainCamera" look-controls="magicWindowTrackingEnabled: true; touchEnabled: true; reverseMouseDrag: false"></a-camera>
     </a-entity>
 
   </a-scene>
 
-  <!-- LÓGICA DE CÁMARA Y CONTROL -->
   <script>
-    // Inicializar cámara trasera en el fondo
+    // Inicializar Cámara de la Tablet
     async function initCamera() {
       const video = document.getElementById('webcam');
       try {
@@ -158,16 +136,30 @@
         video.srcObject = stream;
       } catch (err) {
         try {
-          // Si no detecta cámara trasera exacta (ej. laptop), usa la cámara por defecto
           const fallbackStream = await navigator.mediaDevices.getUserMedia({ video: true });
           video.srcObject = fallbackStream;
         } catch (e) {
-          console.error("No se pudo acceder a la cámara:", e);
+          console.error("Error al abrir cámara:", e);
         }
       }
     }
 
+    // Activar permisos de sensores en tablets (Especialmente iPadOS / Chrome Móvil)
+    function activarSensores() {
+      if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+        DeviceOrientationEvent.requestPermission()
+          .then(response => {
+            if (response === 'granted') {
+              window.dispatchEvent(new Event('deviceorientation'));
+            }
+          })
+          .catch(console.error);
+      }
+    }
+
     window.addEventListener('load', initCamera);
+    window.addEventListener('click', activarSensores, { once: true });
+    window.addEventListener('touchstart', activarSensores, { once: true });
 
     // Control de visibilidad
     const zonaPrimitivas = document.getElementById('zona-primitivas');
@@ -180,24 +172,28 @@
     }
 
     function mostrarTodo() {
+      activarSensores();
       zonaPrimitivas.setAttribute('visible', 'true');
       zonaCad.setAttribute('visible', 'true');
       setActiveButton('btn-ambos');
     }
 
     function mostrarPrimitivas() {
+      activarSensores();
       zonaPrimitivas.setAttribute('visible', 'true');
       zonaCad.setAttribute('visible', 'false');
       setActiveButton('btn-primitivas');
     }
 
     function mostrarCAD() {
+      activarSensores();
       zonaPrimitivas.setAttribute('visible', 'false');
       zonaCad.setAttribute('visible', 'true');
       setActiveButton('btn-cad');
     }
 
     function forzarIngresoVR() {
+      activarSensores();
       if (sceneEl) {
         sceneEl.enterVR();
       }
